@@ -8,7 +8,7 @@ import re
 Client = discord.Client()
 client = commands.Bot(command_prefix = "?")
 bot_token = "BOT_TOKEN"
-log_channel = dicord.Object(id=CHANNEL_ID)
+log_channel = dicord.Object(id="CHANNEL_ID")
 
 @client.event
 async def on_ready():
@@ -24,20 +24,9 @@ async def on_ready():
 async def on_message(message):
 	if message.author.id != client.user.id:
 		msg = message.content
-		counter1 = 0
-		counter2 = 0
-		for m in message.mentions:
-			msg = re.sub('<@!?\d*>', message.mentions[counter1].display_name, msg, 1)
-			counter1 += 1
-		for n in message.role_mentions:
-			msg = re.sub('<@&\d*>', message.role_mentions[counter2].name, msg, 1)
-			counter2 += 1
-		msg = re.sub('@', '', msg)
-		await client.send_message(log_channel, "{}`{}` just said in {}: *'{}'*".format(message.author.name, message.author.id, message.channel.name, msg))
-		if len(message.attachments) > 0:
-			pic = message.attachments[0].get("url")
-			print(pic)
-			await client.send_message(log_channel, pic)
+		await client.send_message(log_channel, "{}`{}` just said in {}: *'{}'*".format(message.author.name, message.author.id, message.channel.mention, message.clean_content.replace("@","")))
+		for att in message.attachments:
+			await client.send_message(log_channel, att.get("url"))
 		await client.process_commands(message)
     
     
