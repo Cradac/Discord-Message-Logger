@@ -9,5 +9,4 @@ This bot allows you to log every message, incl. media and embeds to be logges in
 ---
 
 Author: Max aka. Cradac
-
 tested on "the Iron Fleet" - Discord Server
