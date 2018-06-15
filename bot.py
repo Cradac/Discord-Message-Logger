@@ -8,7 +8,7 @@ import re
 Client = discord.Client()
 client = commands.Bot(command_prefix = "?")
 bot_token = "BOT_TOKEN"
-adminID="412881472727547904"
+log_channel = dicord.Object(id=CHANNEL_ID)
 
 @client.event
 async def on_ready():
@@ -36,11 +36,11 @@ async def on_message(message):
 		#print(msg)
 		msg = re.sub('@', '', msg)
 		#print(msg)
-		await client.send_message(discord.Object(id="456006758704480256"), "{}`{}` just said in {}: *'{}'*".format(message.author.name, message.author.id, message.channel.name, msg))
+		await client.send_message(log_channel, "{}`{}` just said in {}: *'{}'*".format(message.author.name, message.author.id, message.channel.name, msg))
 		if len(message.attachments) > 0:
 			pic = message.attachments[0].get("url")
 			print(pic)
-			await client.send_message(discord.Object(id="456006758704480256"), pic)
+			await client.send_message(log_channel, pic)
 		await client.process_commands(message)
     
     
