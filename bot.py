@@ -24,7 +24,6 @@ async def on_ready():
 async def on_message(message):
 	if message.author.id != client.user.id:
 		msg = message.content
-		#print(msg)
 		counter1 = 0
 		counter2 = 0
 		for m in message.mentions:
@@ -33,9 +32,7 @@ async def on_message(message):
 		for n in message.role_mentions:
 			msg = re.sub('<@&\d*>', message.role_mentions[counter2].name, msg, 1)
 			counter2 += 1
-		#print(msg)
 		msg = re.sub('@', '', msg)
-		#print(msg)
 		await client.send_message(log_channel, "{}`{}` just said in {}: *'{}'*".format(message.author.name, message.author.id, message.channel.name, msg))
 		if len(message.attachments) > 0:
 			pic = message.attachments[0].get("url")
