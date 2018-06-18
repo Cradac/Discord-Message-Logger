@@ -6,7 +6,6 @@ import asyncio
 Client = discord.Client()
 client = commands.Bot(command_prefix = "?")
 bot_token = "BOT_TOKEN"
-log_channel = dicord.Object(id="CHANNEL_ID")
 
 @client.event
 async def on_ready():
@@ -17,14 +16,19 @@ async def on_ready():
 	for server in client.servers:
 		print ("Connected to server: {}".format(server))
 	print("------")
-
+		
 @client.event
 async def on_message(message):
+	log_channel = None
+	for server in client.servers:
+		log_channel = discord.utils.get(server.channels, name="message-log") or log_channel
 	if message.author.id != client.user.id:
 		msg = message.content
 		await client.send_message(log_channel, "{}`{}` just said in {}: *'{}'*".format(message.author.name, message.author.id, message.channel.mention, message.clean_content.replace("@","")))
 		for att in message.attachments:
 			await client.send_message(log_channel, att.get("url"))
+		for emb in message.embeds:
+			await client.send_message(log_channel, "A Bot sent an Embed.")
 		await client.process_commands(message)
     
     
