@@ -2,42 +2,45 @@ import discord
 from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio
+import datetime
 
 Client = discord.Client()
-client = commands.Bot(command_prefix = "?")
+client = commands.Bot(command_prefix = ["?"])
 bot_token = "BOT_TOKEN"
 
 @client.event
 async def on_ready():
 	print("Bot is ready!")
-	await client.change_presence(game=discord.Game(name="watching all messages"))
+	game = discord.Game("the Iron Price | ?help")
+	await client.change_presence(status=discord.Status.online, activity=game)
 	print("Logged in as: " + client.user.name)
-	print("Bot ID: "+client.user.id)
-	for server in client.servers:
-		print ("Connected to server: {}".format(server))
+	print("Bot ID: " + str(client.user.id))
+	for guild in client.guilds:
+		print ("Connected to server: {}".format(guild))
 	print("------")
 		
 @client.event
 async def on_message(message):
-	log_channel = None
-	for server in client.servers:
-		log_channel = discord.utils.get(server.channels, name="message-log") or log_channel
-	if message.author.id != client.user.id:
-		msg = message.content
-		await client.send_message(log_channel, "{}`{}` just said in {}: *'{}'*".format(message.author.name, message.author.id, message.channel.mention, message.clean_content.replace("@","")))
-		for att in message.attachments:
-			await client.send_message(log_channel, att.get("url"))
-		for emb in message.embeds:
-			await client.send_message(log_channel, "A Bot sent an Embed.")
+	guild=message.guild
+	try:
+		log_channel = discord.utils.get(guild.channels, name="message-log")
+	except:
+		await client.process_commands(message)
+		return
+	if log_channel is None:
+		await client.process_commands(message)
+		return
+	if not message.author.bot:
+		embed=discord.Embed(
+			color=0xffd700,
+			timestamp=datetime.datetime.utcnow(),
+			description="in {}:\n{}".format(message.channel.mention, message.content)
+		)
+		embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+		embed.set_footer(text="{}".format(message.author.id))
+		if len(message.attachments) > 0:
+			embed.set_image(url = message.attachments[0].url)
+		await log_channel.send(embed=embed)
 		await client.process_commands(message)
     
-    
-async def connect():
-	print("Logging in...")
-	while not client.is_closed:
-		try:
-			await client.start(bot_token)
-		except:
-			await asyncio.sleep(5)
-		
-client.loop.run_until_complete(connect())
+client.run(bot_token)
