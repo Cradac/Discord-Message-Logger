@@ -11,8 +11,6 @@ bot_token = "BOT_TOKEN"
 @client.event
 async def on_ready():
 	print("Bot is ready!")
-	game = discord.Game("the Iron Price | ?help")
-	await client.change_presence(status=discord.Status.online, activity=game)
 	print("Logged in as: " + client.user.name)
 	print("Bot ID: " + str(client.user.id))
 	for guild in client.guilds:
@@ -21,12 +19,8 @@ async def on_ready():
 		
 @client.event
 async def on_message(message):
-	guild=message.guild
-	try:
-		log_channel = discord.utils.get(guild.channels, name="message-log")
-	except:
-		await client.process_commands(message)
-		return
+	guild = message.guild
+	log_channel = discord.utils.get(guild.channels, name="message-log")
 	if log_channel is None:
 		await client.process_commands(message)
 		return
@@ -37,7 +31,7 @@ async def on_message(message):
 			description="in {}:\n{}".format(message.channel.mention, message.content)
 		)
 		embed.set_author(name=message.author, icon_url=message.author.avatar_url)
-		embed.set_footer(text="{}".format(message.author.id))
+		embed.set_footer(text=message.author.id)
 		if len(message.attachments) > 0:
 			embed.set_image(url = message.attachments[0].url)
 		await log_channel.send(embed=embed)
